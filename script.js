@@ -1,19 +1,19 @@
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-function saveTasks(){
-localStorage.setItem("tasks", JSON.stringify(tasks));
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function renderTasks(){
+function renderTasks() {
 
-const list = document.getElementById("taskList");
-list.innerHTML="";
+    const list = document.getElementById("taskList");
+    list.innerHTML = "";
 
-tasks.forEach((task,index)=>{
+    tasks.forEach((task, index) => {
 
-const li = document.createElement("li");
+        const li = document.createElement("li");
 
-li.innerHTML = `
+        li.innerHTML = `
 <span class="${task.completed ? 'completed' : ''}" onclick="toggleTask(${index})">
 ${task.text}
 </span>
@@ -21,46 +21,55 @@ ${task.text}
 <button class="delete" onclick="deleteTask(${index})">X</button>
 `;
 
-list.appendChild(li);
+        list.appendChild(li);
 
+    });
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.completed).length;
+
+    document.getElementById("taskCounter").textContent = `Tareas: ${total} | Completadas: ${completed}`;
+}
+
+function addTask() {
+
+    const input = document.getElementById("taskInput");
+    const text = input.value.trim();
+
+    if (!text) {
+        alert("Debes escribir una tarea");
+        return;
+    }
+
+    tasks.push({
+        text: text,
+        completed: false
+    });
+
+    saveTasks();
+    renderTasks();
+
+    input.value = "";
+}
+
+function deleteTask(index) {
+
+    tasks.splice(index, 1);
+
+    saveTasks();
+    renderTasks();
+}
+
+function toggleTask(index) {
+
+    tasks[index].completed = !tasks[index].completed;
+
+    saveTasks();
+    renderTasks();
+}
+
+document.getElementById("taskInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+        addTask();
+    }
 });
-}
-
-function addTask(){
-
-const input = document.getElementById("taskInput");
-const text = input.value.trim();
-
-if(!text){
-alert("Debes escribir una tarea");
-return;
-}
-
-tasks.push({
-text:text,
-completed:false
-});
-
-saveTasks();
-renderTasks();
-
-input.value="";
-}
-
-function deleteTask(index){
-
-tasks.splice(index,1);
-
-saveTasks();
-renderTasks();
-}
-
-function toggleTask(index){
-
-tasks[index].completed = !tasks[index].completed;
-
-saveTasks();
-renderTasks();
-}
-
 renderTasks();
